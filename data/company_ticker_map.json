@@ -1,0 +1,378 @@
+{
+  "_metadata": {
+    "description": "Company name to stock ticker mapping for Sentient Trader",
+    "version": "1.0.0",
+    "last_updated": "2025-12-26",
+    "total_mappings": 250
+  },
+  "companies": {
+    "apple": "AAPL",
+    "apple inc": "AAPL",
+    "apple computer": "AAPL",
+    "iphone": "AAPL",
+    "ipad": "AAPL",
+    "macbook": "AAPL",
+
+    "microsoft": "MSFT",
+    "microsoft corporation": "MSFT",
+    "windows": "MSFT",
+    "azure": "MSFT",
+    "xbox": "MSFT",
+    "linkedin": "MSFT",
+
+    "google": "GOOGL",
+    "alphabet": "GOOGL",
+    "alphabet inc": "GOOGL",
+    "youtube": "GOOGL",
+    "android": "GOOGL",
+    "waymo": "GOOGL",
+    "deepmind": "GOOGL",
+
+    "amazon": "AMZN",
+    "amazon.com": "AMZN",
+    "amazon web services": "AMZN",
+    "aws": "AMZN",
+    "whole foods": "AMZN",
+    "twitch": "AMZN",
+    "prime video": "AMZN",
+
+    "meta": "META",
+    "meta platforms": "META",
+    "facebook": "META",
+    "instagram": "META",
+    "whatsapp": "META",
+    "oculus": "META",
+
+    "nvidia": "NVDA",
+    "nvidia corporation": "NVDA",
+    "geforce": "NVDA",
+    "cuda": "NVDA",
+
+    "tesla": "TSLA",
+    "tesla motors": "TSLA",
+    "tesla inc": "TSLA",
+    "spacex": "TSLA",
+    "elon musk": "TSLA",
+
+    "netflix": "NFLX",
+    "netflix inc": "NFLX",
+
+    "adobe": "ADBE",
+    "adobe systems": "ADBE",
+    "photoshop": "ADBE",
+    "acrobat": "ADBE",
+
+    "salesforce": "CRM",
+    "salesforce.com": "CRM",
+
+    "intel": "INTC",
+    "intel corporation": "INTC",
+
+    "amd": "AMD",
+    "advanced micro devices": "AMD",
+    "ryzen": "AMD",
+    "radeon": "AMD",
+
+    "ibm": "IBM",
+    "international business machines": "IBM",
+
+    "oracle": "ORCL",
+    "oracle corporation": "ORCL",
+
+    "cisco": "CSCO",
+    "cisco systems": "CSCO",
+
+    "qualcomm": "QCOM",
+    "snapdragon": "QCOM",
+
+    "broadcom": "AVGO",
+    "broadcom inc": "AVGO",
+
+    "texas instruments": "TXN",
+
+    "paypal": "PYPL",
+    "paypal holdings": "PYPL",
+    "venmo": "PYPL",
+
+    "visa": "V",
+    "visa inc": "V",
+
+    "mastercard": "MA",
+    "mastercard inc": "MA",
+
+    "american express": "AXP",
+    "amex": "AXP",
+
+    "jpmorgan": "JPM",
+    "jp morgan": "JPM",
+    "jpmorgan chase": "JPM",
+    "chase bank": "JPM",
+
+    "bank of america": "BAC",
+    "bofa": "BAC",
+
+    "wells fargo": "WFC",
+
+    "goldman sachs": "GS",
+    "goldman": "GS",
+
+    "morgan stanley": "MS",
+
+    "citigroup": "C",
+    "citibank": "C",
+    "citi": "C",
+
+    "blackrock": "BLK",
+
+    "berkshire hathaway": "BRK.B",
+    "berkshire": "BRK.B",
+    "warren buffett": "BRK.B",
+
+    "walmart": "WMT",
+    "wal-mart": "WMT",
+
+    "target": "TGT",
+    "target corporation": "TGT",
+
+    "costco": "COST",
+    "costco wholesale": "COST",
+
+    "home depot": "HD",
+    "homedepot": "HD",
+
+    "lowes": "LOW",
+    "lowe's": "LOW",
+
+    "nike": "NKE",
+    "nike inc": "NKE",
+
+    "starbucks": "SBUX",
+
+    "mcdonalds": "MCD",
+    "mcdonald's": "MCD",
+
+    "coca cola": "KO",
+    "coca-cola": "KO",
+    "coke": "KO",
+
+    "pepsi": "PEP",
+    "pepsico": "PEP",
+
+    "procter gamble": "PG",
+    "procter & gamble": "PG",
+    "p&g": "PG",
+
+    "johnson johnson": "JNJ",
+    "johnson & johnson": "JNJ",
+    "j&j": "JNJ",
+
+    "pfizer": "PFE",
+    "pfizer inc": "PFE",
+
+    "merck": "MRK",
+    "merck & co": "MRK",
+
+    "abbvie": "ABBV",
+
+    "eli lilly": "LLY",
+    "lilly": "LLY",
+
+    "unitedhealth": "UNH",
+    "united health": "UNH",
+    "unitedhealth group": "UNH",
+
+    "disney": "DIS",
+    "walt disney": "DIS",
+    "disney+": "DIS",
+    "espn": "DIS",
+    "marvel": "DIS",
+    "pixar": "DIS",
+
+    "comcast": "CMCSA",
+    "nbcuniversal": "CMCSA",
+    "xfinity": "CMCSA",
+
+    "verizon": "VZ",
+    "verizon communications": "VZ",
+
+    "at&t": "T",
+    "att": "T",
+
+    "t-mobile": "TMUS",
+    "tmobile": "TMUS",
+
+    "boeing": "BA",
+    "boeing company": "BA",
+
+    "lockheed martin": "LMT",
+    "lockheed": "LMT",
+
+    "raytheon": "RTX",
+    "rtx": "RTX",
+
+    "general dynamics": "GD",
+
+    "northrop grumman": "NOC",
+    "northrop": "NOC",
+
+    "caterpillar": "CAT",
+    "caterpillar inc": "CAT",
+
+    "deere": "DE",
+    "john deere": "DE",
+
+    "3m": "MMM",
+    "3m company": "MMM",
+
+    "general electric": "GE",
+    "ge": "GE",
+
+    "honeywell": "HON",
+    "honeywell international": "HON",
+
+    "uber": "UBER",
+    "uber technologies": "UBER",
+
+    "lyft": "LYFT",
+    "lyft inc": "LYFT",
+
+    "airbnb": "ABNB",
+
+    "doordash": "DASH",
+
+    "snap": "SNAP",
+    "snap inc": "SNAP",
+    "snapchat": "SNAP",
+
+    "pinterest": "PINS",
+
+    "twitter": "TWTR",
+    "x corp": "TWTR",
+
+    "spotify": "SPOT",
+
+    "zoom": "ZM",
+    "zoom video": "ZM",
+    "zoom communications": "ZM",
+
+    "docusign": "DOCU",
+
+    "shopify": "SHOP",
+
+    "square": "SQ",
+    "block inc": "SQ",
+    "cash app": "SQ",
+
+    "coinbase": "COIN",
+
+    "robinhood": "HOOD",
+    "robinhood markets": "HOOD",
+
+    "palantir": "PLTR",
+    "palantir technologies": "PLTR",
+
+    "snowflake": "SNOW",
+
+    "crowdstrike": "CRWD",
+
+    "datadog": "DDOG",
+
+    "cloudflare": "NET",
+
+    "roblox": "RBLX",
+
+    "rivian": "RIVN",
+    "rivian automotive": "RIVN",
+
+    "lucid": "LCID",
+    "lucid motors": "LCID",
+    "lucid group": "LCID",
+
+    "nio": "NIO",
+    "nio inc": "NIO",
+
+    "xpeng": "XPEV",
+
+    "li auto": "LI",
+
+    "gamestop": "GME",
+    "game stop": "GME",
+
+    "amc entertainment": "AMC",
+    "amc theatres": "AMC",
+
+    "blackberry": "BB",
+
+    "nokia": "NOK",
+
+    "sofi": "SOFI",
+    "social finance": "SOFI",
+
+    "ford": "F",
+    "ford motor": "F",
+
+    "general motors": "GM",
+    "gm": "GM",
+    "chevrolet": "GM",
+
+    "exxon": "XOM",
+    "exxon mobil": "XOM",
+    "exxonmobil": "XOM",
+
+    "chevron": "CVX",
+    "chevron corporation": "CVX",
+
+    "conocophillips": "COP",
+
+    "occidental": "OXY",
+    "occidental petroleum": "OXY",
+
+    "schlumberger": "SLB",
+
+    "reliance": "RELIANCE.NS",
+    "reliance industries": "RELIANCE.NS",
+    "jio": "RELIANCE.NS",
+
+    "tata": "TCS.NS",
+    "tata consultancy": "TCS.NS",
+    "tcs": "TCS.NS",
+
+    "infosys": "INFY",
+    "infosys ltd": "INFY",
+
+    "wipro": "WIPRO.NS",
+
+    "hdfc bank": "HDFCBANK.NS",
+    "hdfc": "HDFCBANK.NS",
+
+    "icici bank": "ICICIBANK.NS",
+    "icici": "ICICIBANK.NS",
+
+    "state bank": "SBIN.NS",
+    "sbi": "SBIN.NS",
+    "state bank of india": "SBIN.NS",
+
+    "sensex": "^BSESN",
+    "bse sensex": "^BSESN",
+
+    "nifty": "^NSEI",
+    "nifty 50": "^NSEI",
+    "nse nifty": "^NSEI",
+
+    "dow jones": "^DJI",
+    "dow": "^DJI",
+    "djia": "^DJI",
+
+    "s&p 500": "^GSPC",
+    "s&p500": "^GSPC",
+    "sp500": "^GSPC",
+
+    "nasdaq": "^IXIC",
+    "nasdaq composite": "^IXIC"
+  },
+  "ticker_aliases": {
+    "GOOG": "GOOGL",
+    "BRK.A": "BRK.B",
+    "BRK": "BRK.B"
+  }
+}

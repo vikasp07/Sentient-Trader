@@ -1,0 +1,298 @@
+# docker-compose.yml
+# No "version:" key (modern Docker Compose will infer the version).
+services:
+  # ----------------------------
+  # Redpanda (Kafka)
+  # ----------------------------
+  redpanda:
+    image: redpandadata/redpanda:latest
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=1G
+      - --reserve-memory=0M
+      - --check=false
+      - --node-id=0
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+      - --rpc-addr=0.0.0.0:33145
+      - --advertise-rpc-addr=redpanda:33145
+    ports:
+      - "9092:9092"
+    volumes:
+      - redpanda_data:/var/lib/redpanda
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -q healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Redis
+  # ----------------------------
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # MinIO (optional storage)
+  # ----------------------------
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin12345
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Main API
+  # ----------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python serve/api.py
+    environment:
+      PYTHONPATH: /app
+      REDIS_URL: redis://redis:6379/0
+      KAFKA_BOOTSTRAP: redpanda:9092
+      NEWSAPI_KEY: ${NEWSAPI_KEY}
+      GNEWS_API_KEY: ${GNEWS_API_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./results:/app/results
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Sentiment API (FinBERT)
+  # ----------------------------
+  sentiment-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m enrich.sentiment.sentiment_analysis
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      FINBERT_MODEL: ProsusAI/finbert
+      PYTHONPATH: /app
+    ports:
+      - "5000:5000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Sentiment Worker (FinBERT)
+  # Consumes from news-with-tickers (enriched by ticker-extraction-worker)
+  # ----------------------------
+  sentiment-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m enrich.sentiment.worker
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      KAFKA_BOOTSTRAP: redpanda:9092
+      INPUT_TOPIC: news-with-tickers
+      OUTPUT_TOPIC: news-sentiment
+      FINBERT_MODEL: ProsusAI/finbert
+      PYTHONPATH: /app
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ticker-extraction-worker:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Ticker Extraction Worker (extracts tickers with confidence)
+  # Consumes from news-stream, produces to news-with-tickers
+  # ----------------------------
+  ticker-extraction-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m enrich.ticker_extraction.worker
+    environment:
+      PYTHONPATH: /app
+      KAFKA_BOOTSTRAP: redpanda:9092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      INPUT_TOPIC: news-stream
+      OUTPUT_TOPIC: news-with-tickers
+      CONSUMER_GROUP: ticker-extraction-group
+      MIN_CONFIDENCE: 0.5
+      COMPANY_MAP_PATH: /app/data/company_ticker_map.json
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Feature Worker
+  # ----------------------------
+  feature-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m feature_store.feature_worker
+    environment:
+      KAFKA_BOOTSTRAP: redpanda:9092
+      REDIS_URL: redis://redis:6379/0
+      INPUT_TOPIC: market-ticks
+      PYTHONPATH: /app
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Feature API
+  # ----------------------------
+  feature-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m feature_store.api
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      PYTHONPATH: /app
+    ports:
+      - "8100:8100"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Strategy Worker (consumes news-sentiment -> produces trade-decisions)
+  # ----------------------------
+  strategy-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python tools/strategy_worker.py
+    environment:
+      PYTHONPATH: /app
+      KAFKA_BOOTSTRAP: redpanda:9092
+      INPUT_TOPIC: news-sentiment
+      OUTPUT_TOPIC: trade-decisions
+      REDIS_URL: redis://redis:6379/0
+      FEATURE_API_URL: http://feature-api:8100
+    volumes:
+      - ./results:/app/results
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      feature-api:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # News Fetcher (periodic) — makes ingestion automatic
+  # ----------------------------
+  news-fetcher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "while true; do
+        python -m ingest.news_api_adapter.fetch_news_api --query 'stock market OR finance OR technology' --pages 1 && sleep 300 || sleep 60;
+      done"
+    environment:
+      NEWSAPI_KEY: ${NEWSAPI_KEY}
+      GNEWS_API_KEY: ${GNEWS_API_KEY}
+      KAFKA_BOOTSTRAP: redpanda:9092
+      REDIS_URL: redis://redis:6379/0
+      PYTHONPATH: /app
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+  # ----------------------------
+  # Market Data Producer (fetches stock prices -> market-ticks)
+  # ----------------------------
+  market-data-producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python tools/market_data_producer.py
+    environment:
+      PYTHONPATH: /app
+      KAFKA_BOOTSTRAP: redpanda:9092
+      OUTPUT_TOPIC: market-ticks
+      FETCH_INTERVAL_SEC: 30
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - trader-net
+
+volumes:
+  redpanda_data:
+  redis_data:
+  minio_data:
+  results:
+
+networks:
+  trader-net:
+    driver: bridge

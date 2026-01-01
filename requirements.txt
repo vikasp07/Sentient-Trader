@@ -1,0 +1,32 @@
+# Core
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+
+# Messaging / storage
+redis
+kafka-python
+python-snappy
+
+# Data / finance
+requests
+pandas
+numpy
+yfinance
+pyarrow
+
+# ML / infra
+onnxruntime
+mlflow
+prometheus-client
+
+# FinBERT for sentiment analysis
+transformers>=4.30.0
+torch>=2.0.0
+sentencepiece
+
+# NLP for ticker extraction
+spacy>=3.5.0
+
+pytest
